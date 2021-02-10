@@ -10,6 +10,25 @@
       "id": "Z2hlvDmLOSRZGebC_Z_aA"
     }
   ],
-  "posts": [],
+  "posts": [
+    {
+      "message": "this is my first post!",
+      "author": "Z2hlvDmLOSRZGebC_Z_aA",
+      "createdAt": 1612983000118,
+      "id": "qbKSHAnSF7XXdAq2bohML"
+    },
+    {
+      "message": "my second post!",
+      "author": "Z2hlvDmLOSRZGebC_Z_aA",
+      "createdAt": 1612983080381,
+      "id": "ggsLasLmuY1S5CynS2-J8"
+    },
+    {
+      "message": "welcome everybody",
+      "author": "Z2hlvDmLOSRZGebC_Z_aA",
+      "createdAt": 1612983901757,
+      "id": "HHojkPaClI--Kfu38oSur"
+    }
+  ],
   "settings": []
 }
