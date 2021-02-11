@@ -1,4 +1,4 @@
-const { gql, ApolloServer, PubSub } = require("apollo-server");
+const { gql, ApolloServer, PubSub, AuthenticationError, UserInputError } = require("apollo-server");
 
 const pubSub = new PubSub();
 const NEW_ITEM = 'NEW_ITEM';
@@ -7,6 +7,7 @@ const typeDefs = gql`
   type User {
     id: ID!
     username: String!
+    error: String!
     createdAt: Int!
   }
 
@@ -81,11 +82,22 @@ const resolvers = {
       };
     },
   },
+
+  User: {
+    error() {
+      throw new AuthenticationError('not auth');
+    }
+  }
+
 };
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  formatError(e) {
+    console.log(e);
+    return e;
+  },
   context({connection}) {
     if (connection) {
       return {...connection.context};

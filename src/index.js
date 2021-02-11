@@ -1,4 +1,4 @@
-const {ApolloServer} = require('apollo-server')
+const {ApolloServer, AuthenticationError} = require('apollo-server')
 const typeDefs = require('./typedefs')
 const resolvers = require('./resolvers')
 const {createToken, getUserFromToken} = require('./auth')
@@ -24,7 +24,7 @@ const server = new ApolloServer({
       const token = connectionParams.Authorization
       const user = getUserFromToken(token)
 
-      if (!user) throw new Error("Unauthenticated");
+      if (!user) throw new AuthenticationError("Unauthenticated");
 
       return {user}
     }
