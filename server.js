@@ -1,14 +1,36 @@
-const { gql, ApolloServer, PubSub, AuthenticationError, UserInputError } = require("apollo-server");
+const { gql,ApolloServer, PubSub, AuthenticationError, UserInputError, SchemaDirectiveVisitor } = require("apollo-server");
+const {defaultFieldResolver, GraphQLString} = require('graphql');
 
 const pubSub = new PubSub();
 const NEW_ITEM = 'NEW_ITEM';
 
+class LogDirective extends SchemaDirectiveVisitor {
+  visitFieldDefinition(field, type) {
+    const resolver = field.resolve || defaultFieldResolver;
+    //const {message} = this.args;
+
+    // pass up arguments to the directives
+    field.args.push({
+      type: GraphQLString,
+      name: 'message'
+    });
+
+    field.resolve = (root, {message, ...rest}, ctx, info) => {
+      const {message: schemaMessage} = this.args;
+      console.log('hi!!!', message || schemaMessage);
+      return resolver.call(this, root, rest, ctx, info);
+    }
+  }
+}
+
 const typeDefs = gql`
+  directive @log(message: String = "my msg") on FIELD_DEFINITION
+
   type User {
-    id: ID!
-    username: String!
-    error: String!
-    createdAt: Int!
+    id: ID! @log
+    username: String! @log(message: "username here")
+    error: String! @deprecated(reason: "Use this other field")
+    createdAt: String!
   }
 
   type Settings {
@@ -85,7 +107,13 @@ const resolvers = {
 
   User: {
     error() {
-      throw new AuthenticationError('not auth');
+      return 'aasasd';
+    },
+    id() {
+      return '234234234';
+    },
+    username() {
+      return 'sebastian'
     }
   }
 
@@ -94,6 +122,9 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  schemaDirectives: {
+    log: LogDirective
+  },
   formatError(e) {
     console.log(e);
     return e;
